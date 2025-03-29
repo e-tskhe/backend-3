@@ -89,15 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdo->beginTransaction();
     // Вставка основной информации в таблицу application
     $stmt = $pdo->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) VALUES (:name, :phone, :email, :birthdate, :gender, :bio)");
-    $stmt->execute([$name, $phone, $email, $birthdate, $gender, $bio]);
-    $stmt->execute([
-      ':name' => $name,
-      ':phone' => $phone,
-      ':email' => $email,
-      ':birthdate' => $birthdate,
-      ':gender' => $gender,
-      ':bio' => $bio
-    ]);
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':phone', $phone);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':birthdate', $birthdate);
+    $stmt->bindParam(':gender', $gender);
+    $stmt->bindParam(':bio', $bio);
+    
+    $stmt->execute();
     $applicationId = $pdo->lastInsertId();
 
     // Вставка языков программирования в таблицу application_language
