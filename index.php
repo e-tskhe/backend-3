@@ -85,9 +85,6 @@ if (empty($errors)) {
   $bio = $_POST['bio'] ?? '';
   $languages = $_POST['languages'] ?? []; // Массив ID языков программирования
 
-  // Начало транзакции
-  $pdo->beginTransaction();
-
   // Вставка основной информации в таблицу application
   $stmt = $pdo->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) VALUES (?, ?, ?, ?, ?, ?)");
   $stmt->execute([$name, $phone, $email, $birthdate, $gender, $bio]);
