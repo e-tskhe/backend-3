@@ -69,12 +69,12 @@ if ($errors) {
   // При наличии ошибок завершаем работу скрипта.
   exit();
 }
-// Сохранение в базу данных.
 
-$user = 'u68891'; // Заменить на ваш логин uXXXXX
-$pass = '3849293'; // Заменить на пароль
+// Сохранение в базу данных.
+$user = 'u68891'; 
+$pass = '3849293'; 
 $pdo = new PDO('mysql:host=localhost;dbname=u68891', $user, $pass,
- [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); // Заменить test на имя БД, совпадает с логином uXXXXX
+ [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (empty($errors)) {
@@ -84,11 +84,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $birthdate = $_POST['birthdate'] ?? '';
     $gender = $_POST['gender'] ?? '';
     $bio = $_POST['bio'] ?? '';
-    $languages = $_POST['languages'] ?? []; // Массив ID языков программирования
+    $languages = $_POST['languages'] ?? []; 
 
     $pdo->beginTransaction();
-    // Вставка основной информации в таблицу application
-    $stmt = $pdo->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) VALUES (:name, :phone, :email, :birthdate, :gender, :bio)");
+
+    // Сохранение основной информации в таблицу application
+    $stmt = $pdo->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) 
+              VALUES (:name, :phone, :email, :birthdate, :gender, :bio)");
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':phone', $phone);
     $stmt->bindParam(':email', $email);
@@ -99,29 +101,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $applicationId = $pdo->lastInsertId();
 
-    // Вставка языков программирования в таблицу application_language
+    // Сохранение любимых языков программирования в таблицу application_language
     $langStmt = $pdo->prepare("
                 INSERT INTO programming_language (name)
                 VALUES (:name)
                 ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)
             ");
-            
+    
     $appLangStmt = $pdo->prepare("
         INSERT INTO application_language (application_id, language_id)
         VALUES (:app_id, :lang_id)
     ");
     foreach ($languages as $langName) {
-      // Вставка языка, если его еще нет в базе
-      $langStmt->execute([':name' => $langName]);
-      $langId = $pdo->lastInsertId();
-      
-      // Связывание языка с заявкой
       $appLangStmt->execute([
           ':app_id' => $applicationId,
           ':lang_id' => $langId
       ]);
     }
-    // Завершение транзакции
     $pdo->commit();
 
     echo "Данные успешно сохранены!";
