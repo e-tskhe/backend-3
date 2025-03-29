@@ -10,26 +10,28 @@
 
     <body>
         <div class="formular">
-            <h2>Анкета</h2>
             
             <form action="" method="POST">
-
+            <h2>Анкета</h2>
+                
             <div class="container">
-            <label for="fullname">ФИО:</label>
-            <input type="text" id="fullname" name="fullname" maxlength="150">
+            <label for="name">ФИО:</label>
+            <input type="text" id="name" name="name" maxlength="100">
             </div>
 
             <div class="container">
             <label for="phone">Телефон:</label>
             <input type="tel" id="phone" name="phone">
-</div>
-<div>
+            </div>
+
+            <div class="container">
             <label for="email">E-mail:</label>
             <input type="email" id="email" name="email">
             </div class="container">
-            <label for="dob">Дата рождения:</label>
-            <input type="date" id="dob" name="dob">
+            <label for="birthdate">Дата рождения:</label>
+            <input type="date" id="birthdate" name="birthdate">
 
+            <div class="container">
             <label>Пол:</label>
             <div id="gender">
                 <input type="radio" id="male" name="gender" value="male">
@@ -37,8 +39,10 @@
                 <input type="radio" id="female" name="gender" value="female">
                 <label for="female" style="font-weight: 500;">Женский</label>
             </div>
+            </div>
 
-            <label for="languages">Любимый язык программирования:</label>
+            <div class="container">
+            <label for="languages">Любимый язык программирования:<br></label>
             <select id="languages" name="languages[]" multiple>
                 <option value="Pascal">Pascal</option>
                 <option value="C">C</option>
@@ -53,15 +57,23 @@
                 <option value="Scala">Scala</option>
                 <option value="Go">Go</option>
             </select>
+            </div>
 
-            <label for="bio">Биография:</label>
+            <div class="container">
+            <label for="bio">Биография:<br></label>
             <textarea id="bio" name="bio" rows="4"></textarea>
+            </div>
 
+            <div class="container">
             <label>
                 <input type="checkbox" name="agreement"> С контрактом ознакомлен(а)
             </label>
+            </div>
 
+            <div class="container">
             <button type="submit">Отправить</button>
+            </div>
+
             </form>
         </div>
     </body>

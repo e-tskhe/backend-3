@@ -77,21 +77,49 @@ $db = new PDO('mysql:host=localhost;dbname=u68891', $user, $pass,
  [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); // Заменить test на имя БД, совпадает с логином uXXXXX
 
 if (empty($errors)) {
-  //Еще вариант
-  $stmt = $db->prepare("INSERT INTO users (fullname, phone, email, dob, gender, languages, bio) VALUES (:fullname, :phone, :email, :dob, :gender, :languages, :bio)");
-  $stmt->bindParam(':fullname', $fullname);
-  $stmt->bindParam(':phone', $phone);
-  $stmt->bindParam(':email', $email);
-  $stmt->bindParam(':dob', $dob);
-  $stmt->bindParam(':gender', $gender);
-  $stmt->bindParam(':languages', $languages);
-  $stmt->bindParam(':bio', $bio);
-  // $firstname = "John";
-  // $lastname = "Smith";
-  // $email = "john@test.com";
-  $stmt->execute();
-  print('Спасибо, ваша анкета сохранена!<br>');
-  exit();
+  $name = $_POST['name'] ?? '';
+  $phone = $_POST['phone'] ?? '';
+  $email = $_POST['email'] ?? '';
+  $birthdate = $_POST['birthdate'] ?? '';
+  $gender = $_POST['gender'] ?? '';
+  $bio = $_POST['bio'] ?? '';
+  $languages = $_POST['languages'] ?? []; // Массив ID языков программирования
+
+  // Начало транзакции
+  $pdo->beginTransaction();
+
+  // Вставка основной информации в таблицу application
+  $stmt = $pdo->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) VALUES (?, ?, ?, ?, ?, ?)");
+  $stmt->execute([$name, $phone, $email, $birthdate, $gender, $bio]);
+  $applicationId = $pdo->lastInsertId();
+
+  // Вставка языков программирования в таблицу application_language
+  $stmt = $pdo->prepare("INSERT INTO application_language (application_id, language_id) VALUES (?, ?)");
+  foreach ($languages as $languageId) {
+      $stmt->execute([$applicationId, $languageId]);
+  }
+
+  // Завершение транзакции
+  $pdo->commit();
+
+  echo "Данные успешно сохранены!";
+  // //Еще вариант
+  // $stmt = $db->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) VALUES (:fullname, :phone, :email, :dob, :gender, :bio)");
+  // $stmt->bindParam(':fullname', $fullname);
+  // $stmt->bindParam(':phone', $phone);
+  // $stmt->bindParam(':email', $email);
+  // $stmt->bindParam(':dob', $dob);
+  // $stmt->bindParam(':gender', $gender);
+  // $stmt->bindParam(':bio', $bio);
+
+  // $stmt = $db->prepare("INSERT INTO application_language (name, phone, email, birthdate, gender, bio) VALUES (:fullname, :phone, :email, :dob, :gender, :bio)");
+
+  // // $firstname = "John";
+  // // $lastname = "Smith";
+  // // $email = "john@test.com";
+  // $stmt->execute();
+  // print('Спасибо, ваша анкета сохранена!<br>');
+  // exit();
 }
 
 
