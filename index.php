@@ -73,7 +73,7 @@ if ($errors) {
 
 $user = 'u68891'; // Заменить на ваш логин uXXXXX
 $pass = '3849293'; // Заменить на пароль
-$db = new PDO('mysql:host=localhost;dbname=u68891', $user, $pass,
+$pdo = new PDO('mysql:host=localhost;dbname=u68891', $user, $pass,
  [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); // Заменить test на имя БД, совпадает с логином uXXXXX
 
 if (empty($errors)) {
