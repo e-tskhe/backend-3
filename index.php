@@ -77,7 +77,7 @@ $pdo = new PDO('mysql:host=localhost;dbname=u68891', $user, $pass,
  [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); // Заменить test на имя БД, совпадает с логином uXXXXX
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (empty($errors)) {
+  if (empty($errors)) {
     $name = $_POST['name'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $email = $_POST['email'] ?? '';
@@ -99,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       ':bio' => $bio
     ]);
     $applicationId = $pdo->lastInsertId();
+
     // Вставка языков программирования в таблицу application_language
     $langStmt = $pdo->prepare("
                 INSERT INTO programming_language (name)
@@ -106,67 +107,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)
             ");
             
-            $appLangStmt = $pdo->prepare("
-                INSERT INTO application_language (application_id, language_id)
-                VALUES (:app_id, :lang_id)
-            ");
-            foreach ($languages as $langName) {
-              // Вставка языка, если его еще нет в базе
-              $langStmt->execute([':name' => $langName]);
-              $langId = $pdo->lastInsertId();
-              
-              // Связывание языка с заявкой
-              $appLangStmt->execute([
-                  ':app_id' => $applicationId,
-                  ':lang_id' => $langId
-              ]);
-
+    $appLangStmt = $pdo->prepare("
+        INSERT INTO application_language (application_id, language_id)
+        VALUES (:app_id, :lang_id)
+    ");
+    foreach ($languages as $langName) {
+      // Вставка языка, если его еще нет в базе
+      $langStmt->execute([':name' => $langName]);
+      $langId = $pdo->lastInsertId();
+      
+      // Связывание языка с заявкой
+      $appLangStmt->execute([
+          ':app_id' => $applicationId,
+          ':lang_id' => $langId
+      ]);
+    }
     // Завершение транзакции
     $pdo->commit();
 
     echo "Данные успешно сохранены!";
-  // //Еще вариант
-  // $stmt = $db->prepare("INSERT INTO application (name, phone, email, birthdate, gender, bio) VALUES (:fullname, :phone, :email, :dob, :gender, :bio)");
-  // $stmt->bindParam(':fullname', $fullname);
-  // $stmt->bindParam(':phone', $phone);
-  // $stmt->bindParam(':email', $email);
-  // $stmt->bindParam(':dob', $dob);
-  // $stmt->bindParam(':gender', $gender);
-  // $stmt->bindParam(':bio', $bio);
-
-  // $stmt = $db->prepare("INSERT INTO application_language (name, phone, email, birthdate, gender, bio) VALUES (:fullname, :phone, :email, :dob, :gender, :bio)");
-
-  // // $firstname = "John";
-  // // $lastname = "Smith";
-  // // $email = "john@test.com";
-  // $stmt->execute();
-  // print('Спасибо, ваша анкета сохранена!<br>');
-  // exit();
   }
 }
-
-
-// // Подготовленный запрос. Не именованные метки.
-// try {
-//   $stmt = $db->prepare("INSERT INTO application SET name = ?");
-//   $stmt->execute([$_POST['fullname']]);
-// }
-// catch(PDOException $e){
-//   print('Error : ' . $e->getMessage());
-//   exit();
-// }
-
-//  stmt - это "дескриптор состояния".
- 
-//  Именованные метки.
-//$stmt = $db->prepare("INSERT INTO test (label,color) VALUES (:label,:color)");
-//$stmt -> execute(['label'=>'perfect', 'color'=>'green']);
- 
-
-
-// Делаем перенаправление.
-// Если запись не сохраняется, но ошибок не видно, то можно закомментировать эту строку чтобы увидеть ошибку.
-// Если ошибок при этом не видно, то необходимо настроить параметр display_errors для PHP.
-
-
-/////header('Location: ?save=1');
