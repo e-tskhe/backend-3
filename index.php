@@ -113,6 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         VALUES (:app_id, :lang_id)
     ");
     foreach ($languages as $langName) {
+      $langStmt->execute([':name' => $langName]);
+      $langId = $pdo->lastInsertId();
+
       $appLangStmt->execute([
           ':app_id' => $applicationId,
           ':lang_id' => $langId
