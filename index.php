@@ -20,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 // Проверяем ошибки.
 $errors = FALSE;
-if (empty($_POST['fullname'])) {
+if (empty($_POST['name'])) {
   print('Заполните имя.<br/>');
   $errors = TRUE;
 }
 
-if (!preg_match("/[а-я]/i", $_POST['fullname']) && !preg_match("/[a-z]/i", $_POST['fullname'])) {
+if (!preg_match("/[а-я]/i", $_POST['name']) && !preg_match("/[a-z]/i", $_POST['name'])) {
   print('Имя должно содержать только буквы.<br/>');
   $errors = TRUE;
 }
@@ -40,7 +40,7 @@ if (!is_numeric($_POST['phone'])) {
   $errors = TRUE;
 }
 
-if (empty($_POST['dob'])) {
+if (empty($_POST['birthdate'])) {
   print('Заполните дату рождения.<br/>');
   $errors = TRUE;
 }
